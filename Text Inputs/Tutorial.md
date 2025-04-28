@@ -1,3 +1,27 @@
+Claro! Vou te mostrar como criar essa página em **React Native** com esses campos, usando:
+
+- Inputs de texto (`TextInput`) para name, email, celular, password e documento
+- Seletor de arquivo (`expo-image-picker` para avatar)
+- Dropdowns (`@react-native-picker/picker`) para id_grupo, cargo e status
+- Seletor de data (`@react-native-community/datetimepicker`) para data de nascimento
+
+Vou montar o exemplo organizado:
+
+---
+
+### 1. Instale os pacotes necessários
+
+```bash
+npm install @react-native-picker/picker
+npm install @react-native-community/datetimepicker
+expo install expo-image-picker
+```
+
+---
+
+### 2. Código da página (exemplo completo)
+
+```jsx
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, Image, Platform } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
@@ -153,3 +177,6 @@ const styles = {
     borderRadius: 5,
   },
 };
+```
+
+---
