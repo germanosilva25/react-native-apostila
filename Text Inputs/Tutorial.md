@@ -1,89 +1,155 @@
+import React, { useState } from 'react';
+import { View, Text, TextInput, Button, Image, Platform } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
+import * as ImagePicker from 'expo-image-picker';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
-### Como substituir o `Picker` por `DropDownPicker`
+export default function CadastroUsuario() {
+  const [form, setForm] = useState({
+    name: '',
+    email: '',
+    celular: '',
+    password: '',
+    documento: '',
+    id_grupo: 'cliente',
+    cargo: 'cabeleiro',
+    status: 'ativo',
+    data_nascimento: new Date(),
+    avatar: null,
+  });
 
-### 1. Instale o pacote:
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
-```bash
-npm install react-native-dropdown-picker
-```
+  const handleChooseAvatar = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
 
-ou
+    if (!result.canceled) {
+      setForm({ ...form, avatar: result.assets[0].uri });
+    }
+  };
 
-```bash
-yarn add react-native-dropdown-picker
-```
+  const handleDateChange = (event, selectedDate) => {
+    const currentDate = selectedDate || form.data_nascimento;
+    setShowDatePicker(Platform.OS === 'ios');
+    setForm({ ...form, data_nascimento: currentDate });
+  };
 
----
+  const handleSubmit = () => {
+    console.log(form);
+    // Aqui você pode enviar o formulário para o servidor
+  };
 
-### 2. Exemplo atualizado do trecho com **DropDownPicker**
+  return (
+    <View style={{ padding: 20 }}>
+      <Text>Nome</Text>
+      <TextInput
+        style={styles.input}
+        value={form.name}
+        onChangeText={(text) => setForm({ ...form, name: text })}
+      />
 
-Aqui um exemplo de como usar para `id_grupo`, `cargo` e `status`:
+      <Text>Email</Text>
+      <TextInput
+        style={styles.input}
+        value={form.email}
+        keyboardType="email-address"
+        onChangeText={(text) => setForm({ ...form, email: text })}
+      />
 
-```jsx
-import DropDownPicker from 'react-native-dropdown-picker';
-```
+      <Text>Celular</Text>
+      <TextInput
+        style={styles.input}
+        value={form.celular}
+        keyboardType="phone-pad"
+        onChangeText={(text) => setForm({ ...form, celular: text })}
+      />
 
-Depois, no componente:
+      <Text>Senha</Text>
+      <TextInput
+        style={styles.input}
+        value={form.password}
+        secureTextEntry
+        onChangeText={(text) => setForm({ ...form, password: text })}
+      />
 
-```jsx
-const [openGrupo, setOpenGrupo] = useState(false);
-const [openCargo, setOpenCargo] = useState(false);
-const [openStatus, setOpenStatus] = useState(false);
+      <Text>Documento</Text>
+      <TextInput
+        style={styles.input}
+        value={form.documento}
+        keyboardType="numeric"
+        onChangeText={(text) => setForm({ ...form, documento: text })}
+      />
 
-const [grupoOptions, setGrupoOptions] = useState([
-  { label: 'Admin', value: 'admin' },
-  { label: 'Profissional', value: 'profissional' },
-  { label: 'Cliente', value: 'cliente' },
-  { label: 'Gerente', value: 'gerente' },
-]);
+      <Text>Avatar</Text>
+      <Button title="Escolher Avatar" onPress={handleChooseAvatar} />
+      {form.avatar && (
+        <Image
+          source={{ uri: form.avatar }}
+          style={{ width: 100, height: 100, marginVertical: 10 }}
+        />
+      )}
 
-const [cargoOptions, setCargoOptions] = useState([
-  { label: 'Cabeleireiro', value: 'cabeleiro' },
-  { label: 'Manicure', value: 'manicure' },
-  { label: 'Pedicure', value: 'pedicure' },
-]);
+      <Text>Grupo</Text>
+      <Picker
+        selectedValue={form.id_grupo}
+        onValueChange={(itemValue) => setForm({ ...form, id_grupo: itemValue })}
+        style={styles.input}
+      >
+        <Picker.Item label="Admin" value="admin" />
+        <Picker.Item label="Profissional" value="profissional" />
+        <Picker.Item label="Cliente" value="cliente" />
+        <Picker.Item label="Gerente" value="gerente" />
+      </Picker>
 
-const [statusOptions, setStatusOptions] = useState([
-  { label: 'Ativo', value: 'ativo' },
-  { label: 'Inativo', value: 'inativo' },
-]);
-```
+      <Text>Cargo</Text>
+      <Picker
+        selectedValue={form.cargo}
+        onValueChange={(itemValue) => setForm({ ...form, cargo: itemValue })}
+        style={styles.input}
+      >
+        <Picker.Item label="Cabeleireiro" value="cabeleiro" />
+        <Picker.Item label="Manicure" value="manicure" />
+        <Picker.Item label="Pedicure" value="pedicure" />
+      </Picker>
 
-E para renderizar:
+      <Text>Status</Text>
+      <Picker
+        selectedValue={form.status}
+        onValueChange={(itemValue) => setForm({ ...form, status: itemValue })}
+        style={styles.input}
+      >
+        <Picker.Item label="Ativo" value="ativo" />
+        <Picker.Item label="Inativo" value="inativo" />
+      </Picker>
 
-```jsx
-<Text>Grupo</Text>
-<DropDownPicker
-  open={openGrupo}
-  value={form.id_grupo}
-  items={grupoOptions}
-  setOpen={setOpenGrupo}
-  setValue={(callback) => setForm({ ...form, id_grupo: callback(form.id_grupo) })}
-  setItems={setGrupoOptions}
-  style={{ marginBottom: 10 }}
-/>
+      <Text>Data de Nascimento</Text>
+      <Button title="Selecionar Data" onPress={() => setShowDatePicker(true)} />
+      <Text>{form.data_nascimento.toLocaleDateString()}</Text>
+      {showDatePicker && (
+        <DateTimePicker
+          value={form.data_nascimento}
+          mode="date"
+          display="default"
+          onChange={handleDateChange}
+        />
+      )}
 
-<Text>Cargo</Text>
-<DropDownPicker
-  open={openCargo}
-  value={form.cargo}
-  items={cargoOptions}
-  setOpen={setOpenCargo}
-  setValue={(callback) => setForm({ ...form, cargo: callback(form.cargo) })}
-  setItems={setCargoOptions}
-  style={{ marginBottom: 10 }}
-/>
+      <Button title="Salvar" onPress={handleSubmit} />
+    </View>
+  );
+}
 
-<Text>Status</Text>
-<DropDownPicker
-  open={openStatus}
-  value={form.status}
-  items={statusOptions}
-  setOpen={setOpenStatus}
-  setValue={(callback) => setForm({ ...form, status: callback(form.status) })}
-  setItems={setStatusOptions}
-  style={{ marginBottom: 10 }}
-/>
-```
-
----
+const styles = {
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 8,
+    marginBottom: 10,
+    borderRadius: 5,
+  },
+};
