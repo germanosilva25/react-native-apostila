@@ -10,25 +10,30 @@ const pessoas = [
 ];
 
 export default function App(){
+  let i = 0;
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Perfis de Clientes</Text>
       <View style={{flexDirection: "row", margin: 20}}>
-        <View style={{width: '20%'}}><Text>Nome</Text></View>
-        <View style={{width: '10%'}}><Text>Tipo</Text></View>
-        <View style={{width: '10%'}}><Text>Dificuldade</Text></View>
-        <View style={{width: '20%'}}><Text>Estratégia</Text></View>
-        <View style={{width: '10%'}}><Text>Ambiente</Text></View>
-        <View style={{width: '30%', alignItems: "flex-end", marginRight: 30}}>
-              <Text>Ações</Text>
+        <View style={{width: '20%'}}><Text style={{fontWeight: 'bold'}}>Nome</Text></View>
+        <View style={{width: '10%'}}><Text style={{fontWeight: 'bold'}}>Tipo</Text></View>
+        <View style={{width: '10%'}}><Text style={{fontWeight: 'bold'}}>Dificuldade</Text></View>
+        <View style={{width: '20%'}}><Text style={{fontWeight: 'bold'}}>Estratégia</Text></View>
+        <View style={{width: '10%'}}><Text style={{fontWeight: 'bold'}}>Ambiente</Text></View>
+        <View style={{width: '30%', marginRight: 30}}>
+              <Text style={{fontWeight: 'bold'}}>Ações</Text>
         </View>
         
       </View>
       <FlatList
         data={pessoas}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={({item}) => (
-          <View style={{flexDirection: "row", margin: 20}}>
+        renderItem={({item}) => {
+          let cor = i % 2 == 0 ? '#DCDCDC' : 'white'
+          i++;
+          return (
+          
+          <View style={{flexDirection: "row", backgroundColor: cor, padding: 10}}>
             
             <View style={{width: '20%'}}><Text style={{fontWeight: 'bold'}}>{item.nome}</Text></View>
             <View style={{width: '10%'}}><Text>{item.tipo}</Text></View>
@@ -44,7 +49,7 @@ export default function App(){
                     </View>
                   </View>
           </View>
-        )
+        )}
 
         }
       />
